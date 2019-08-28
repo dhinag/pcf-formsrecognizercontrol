@@ -74,4 +74,8 @@
     <value>Sorry, we ran into an issue. Please try again.</value>
     <comment>Show this error for any general error</comment>
   </data>
+  <data name="PCF_FormsRecognizerControl_Check_PDF_Error" xml:space="preserve">
+    <value>Please check the PDF file and try again.</value>
+    <comment>Show this error if an incorrect PDF is uploaded</comment>
+  </data>
 </root>

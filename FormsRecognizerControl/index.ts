@@ -26,9 +26,7 @@ import {FormFill} from "./FormFill";
 		private errorLabelElement: HTMLLabelElement;	
 
 		constructor()
-		{
-
-		}
+		{}
 
 		/**
 		 * Used to initialize the control instance. Controls can kick off remote server calls and other initialization actions here.
@@ -65,8 +63,8 @@ import {FormFill} from "./FormFill";
 		 * This button event handler will allow the user to pick the file from the device
 		 * @param event
 		 */
-		private onUploadButtonClick(event: Event): void 
-		{	
+		private onUploadButtonClick(event: Event): void
+		{		
 			// context.device.pickFile(successCallback, errorCallback) is used to initiate the File Explorer
 			this._context.device.pickFile().then(this.processFile.bind(this), this.showError.bind(this));			
 		}
@@ -86,9 +84,12 @@ import {FormFill} from "./FormFill";
 		// }
 
 		private analyzeDocument(formData : FormData) : void
-		{			
+		{	
+			//Get the subscription key and the analyze model url from the Dynamics 365 form configuration inputs.
 			let subscriptionKey = this._context.parameters.subscriptionKey.raw;
 			let analyzeModelUrl = this._context.parameters.analyzeModelUrl.raw;
+
+			//Call forms recognizer api with the uploaded file. Note that the model is already trained.
 			$.ajax({
 			   method: "POST",
 			   url: analyzeModelUrl,
@@ -102,10 +103,8 @@ import {FormFill} from "./FormFill";
 			   }, success: (data) => {
 				   var obj = JSON.parse(data);
 				   formFill = new FormFill();
-				   obj.pages[0].keyValuePairs.forEach(function (element : any)
-				   {
-					   switch(element.key[0].text)
-					   {
+				   obj.pages[0].keyValuePairs.forEach(function (element : any) {				   
+					   switch(element.key[0].text) {					   
 						   case "Last Name:" : {
 							   formFill.lastName = element.value[0].text;
 							   break;
@@ -131,30 +130,27 @@ import {FormFill} from "./FormFill";
 						   }
 					   }							
 				   });
-
-				   this.hideError("");
-				   if (Object.keys(formFill).length !== 0)
-					{
+				   //If the uploaded pdf file is the expected one, then hide any errors and notify that the output has changed.	 
+				   if (Object.keys(formFill).length !== 0) {					
 						this.hideError("");
 						this._notifyOutputChanged();
 					}
-					else 
-					{
-						this.showError("Please check the PDF and try again.");
+					else {
+						//If the uploaded pdf file is unexpected (incorrect file), then show the error
+						this.showError(this._context.resources.getString("PCF_FormsRecognizerControl_Check_PDF_Error"));
 					}
 			   },
 			   error: (jqXHR) => {
-				   //Show the media unsupported error if the response status code is 415.
-				   if(jqXHR.status === 415) {					
-
+				   //If any file type other than PDF file is uploaded, then media unsupported error has to be shown.
+				   if(jqXHR.status === 415) {
 					   this.showError(this._context.resources.getString("PCF_FormsRecognizerControl_Media_UnSupported_Error"));
 				   }
 				   else {
 					   this.showError(this._context.resources.getString("PCF_FormsRecognizerControl_General_Error"));
 				   }
 			   }					
-	   });
-	}
+	   		});
+		}
 		
 		/**
 		 * 
@@ -162,22 +158,24 @@ import {FormFill} from "./FormFill";
 		 */
 		private processFile(files: ComponentFramework.FileObject[]): void
 		{
-			this.disableRecognizeButton();					
-			if(files.length > 0)
-			{
+			//Disable and change the Button text to indicate the upload and recognition is in progress.
+			this.disableRecognizeButton();	
+
+			//PCF converts the uploaded file as "ComponentFramework.FileObject". But we need to convert it to FormData object for our usage.
+			if(files.length > 0) {			
 				let file: ComponentFramework.FileObject = files[0];					
 				var formData = new FormData();
-				formData.append("type", "application/pdf");
-			
+				formData.append("type", "application/pdf");			
 				let fileObj = this.EncodeToBase64("FileContent", file.fileContent);
+
+				//Once the form data is created appropriately, then, analyze the uploaded document with the forms recognizer api
 				const url = fileObj;
 				fetch(url)
 				.then(res => res.blob())
 				.then(blob => {
 					const file = new File([blob], "Application");
 					formData.append("form", file);
-					this.analyzeDocument(formData);		
-					
+					this.analyzeDocument(formData);
 				}).catch(error => this.showError(this._context.resources.getString("PCF_FormsRecognizerControl_General_Error") + " " + error));				
 			}
 		}		
