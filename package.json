@@ -1,0 +1,20 @@
+{
+  "name": "pcf-project",
+  "version": "1.0.0",
+  "description": "Project for PowerApps custom control",
+  "scripts": {
+    "build": "pcf-scripts build",
+    "clean": "pcf-scripts clean",
+    "rebuild": "pcf-scripts rebuild",
+    "start": "pcf-scripts start"
+  },
+  "dependencies": {
+    "@types/node": "^10.12.18",
+    "@types/powerapps-component-framework": "1.1.0"
+  },
+  "devDependencies": {
+    "@types/jquery": "^3.3.31",
+    "pcf-scripts": "latest",
+    "pcf-start": "latest"
+  }
+}

@@ -1,0 +1,2 @@
+C:\PCFExpmnt\FormsRecognizerControl\obj\Release\FormsRecognizerControl.pcfprojAssemblyReference.cache
+C:\PCFExpmnt\FormsRecognizerControl\obj\Release\FormsRecognizerControl.pcfproj.CoreCompileInputs.cache

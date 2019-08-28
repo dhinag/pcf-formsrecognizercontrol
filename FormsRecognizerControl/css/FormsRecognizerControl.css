@@ -1,0 +1,23 @@
+.DG.PC\.FormsRecognizerControl button{
+	text-decoration: none;
+    display: block;
+    font-size: 14px;
+    margin: 4px 6px;
+    cursor: pointer;
+	color: white;
+    border-radius: 0px;
+	background-color: rgb(59, 121, 183);
+    border: none;
+    padding: 5px;
+    text-align: center;
+}
+
+.DG.PC\.FormsRecognizerControl label{
+    display: none;
+}
+
+.DG.PC\.FormsRecognizerControl .ShowError>label{
+    display: block;
+    color: red;
+}
+
